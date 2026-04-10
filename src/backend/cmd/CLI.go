@@ -18,10 +18,14 @@ func main() {
 	title, _ := reader.ReadString('\n')
 	title = strings.TrimSpace(title)
 
-	fmt.Println("Введите категорию:")
-	category, _ := reader.ReadString('\n')
-	category = strings.TrimSpace(category)
-
+	fmt.Println("Введите уровень 1 - 3:")
+	lvl, _ := reader.ReadString('\n')
+	lvl = strings.TrimSpace(lvl)
+	lvlInt, err := strconv.Atoi(lvl)
+	if err != nil {
+		
+	}
+	
 	fmt.Println("Введите долготу (0.000):")
 	lng, _ := reader.ReadString('\n')
 	lng = strings.TrimSpace(lng)
@@ -42,7 +46,7 @@ func main() {
 
 	inc, err := model.CreateIncidentRequest(
 		title,
-		category,
+		lvlInt,
 		latFloat,
 		lngFloat,
 	)

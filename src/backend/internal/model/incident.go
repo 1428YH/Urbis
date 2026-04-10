@@ -4,7 +4,7 @@ import "fmt"
 
 type Incident struct {
 	ID       int
-	Title    string
+	lvl	     int
 	Category string
 	Lat      float64
 	Lng      float64
@@ -14,14 +14,14 @@ type Incident struct {
 
 type IncidentRequest struct {
 	Title    string  `json:"title"`
-	Category string  `json:"type"`
+	Lvl      int     `json:"lvl"`
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
 }
 
 func CreateIncidentRequest(
 	title string,
-	category string,
+	lvl int,
 	lat float64,
 	lng float64,
 ) (*IncidentRequest, error) {
@@ -29,8 +29,8 @@ func CreateIncidentRequest(
 		return nil, fmt.Errorf("ERROR_TITLE_EMPTY")
 	}
 
-	if category == "" {
-		return nil, fmt.Errorf("ERROR_CATEGORY_EMPTY")
+	if lvl < 1 || lvl > 3 {
+		return nil, fmt.Errorf("ERROR_LVL_INVALID")
 	}
 
 	if lat < -90.0 || lat > 90.0 {
@@ -42,7 +42,7 @@ func CreateIncidentRequest(
 
 	return &IncidentRequest{
 		Title:    title,
-		Category: category,
+		Lvl: 	  lvl,
 		Lat:      lat,
 		Lng:      lng,
 	}, nil

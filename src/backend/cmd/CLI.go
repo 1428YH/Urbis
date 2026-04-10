@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"urbis/src/backend/internal/model"
+	"urbis/src/backend/utilities"
 )
 
 func main() {
@@ -36,20 +37,25 @@ func main() {
 	latFloat, err := strconv.ParseFloat(lat, 64)
 	if err != nil {
 		log.Printf("ERROR_PARSING_FLOAT")
+		return
 	}
 
 	inc, err := model.CreateIncidentRequest(
 		title,
 		category,
-		lngFloat,
 		latFloat,
+		lngFloat,
 	)
-
 	if err != nil {
 		log.Printf("ERROR_CREATE_INCIDENT")
 		return
 	}
 
-	fmt.Println(inc)
+	payload := utilities.ParseJSON(*inc)
+	if payload == nil {
+		log.Printf("ERROR_GET_JSON")
+		return
+	}
 
+	fmt.Println(string(payload))
 }

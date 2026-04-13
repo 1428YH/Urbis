@@ -13,13 +13,15 @@ func HandlerCreateIncident(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("invalid request: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("❌ invalid request: %v", err), http.StatusInternalServerError)
+		return
 	}
 
 	err = validate.Incident(&req)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("invalid struct: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("❌ validation failed: %v", err), http.StatusInternalServerError)
+		return
 	}
-
-	fmt.Fprintln(w, "Everything is fine!")
+	
+	w.Header().Set("Content-Type", "application/json")
 }

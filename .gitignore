@@ -9,3 +9,4 @@ go.work
 page 
 .env
 node_modules
+test

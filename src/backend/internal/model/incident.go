@@ -1,12 +1,12 @@
 package model
 
 type Incident struct {
-	ID       int
-	Lvl	     int
-	Lat      float64
-	Lng      float64
-	Color    string
-	Status   bool
+	ID       int 	 `json:"id"`
+	Lvl	     int 	 `json:"lvl"`
+	Lat      float64 `json:"lat"`
+	Lng      float64 `json:"lng"`
+	Color    string	 `json:"color"`	
+	Status   bool    `json:"status"`
 }
 
 type IncidentRequest struct {

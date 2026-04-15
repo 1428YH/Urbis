@@ -23,6 +23,7 @@ func main() {
 	repo := repository.NewRepo(conn)
 
 	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIncident(repo)))
+	http.HandleFunc("/incidents", middleware.MethodOnly(http.MethodGet, handler.HandlerGetIncident(repo)))
 
 	fmt.Println("Starting HTTP server!")
 	err = http.ListenAndServe(":9091", nil)

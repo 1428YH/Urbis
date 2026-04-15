@@ -10,19 +10,19 @@ import (
 	"urbis/src/backend/internal/service/validate"
 )
 
-func HandlerCreateIcident(repo *repository.Repo) http.HandlerFunc {
+func HandlerCreateIncident(repo *repository.Repo) http.HandlerFunc {
 	return func (w http.ResponseWriter, r *http.Request) {
 		var req model.IncidentRequest
 
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("❌ invalid request: %v", err), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("❌ invalid request: %v", err), http.StatusBadRequest)
 			return
 		}
 
 		err = validate.Incident(&req)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("❌ validation failed: %v", err), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("❌ validation failed: %v", err), http.StatusBadRequest)
 			return 
 		}
 
@@ -33,5 +33,6 @@ func HandlerCreateIcident(repo *repository.Repo) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
 	}
 }

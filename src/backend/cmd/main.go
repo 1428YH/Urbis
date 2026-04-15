@@ -14,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	conn, err := db.CreateConnection()
+	conn, err := db.CreateConnection(ctx)
 	if err != nil {
 		log.Fatalf("Cannot connect to DB: %v", err)
 	}
@@ -22,7 +22,7 @@ func main() {
 
 	repo := repository.NewRepo(conn)
 
-	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIcident(repo)))
+	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIncident(repo)))
 
 	fmt.Println("Starting HTTP server!")
 	err = http.ListenAndServe(":9091", nil)

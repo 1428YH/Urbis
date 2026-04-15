@@ -10,7 +10,7 @@ import (
 func GetIncident(repo *repository.Repo, ctx context.Context) ([]byte,error) {
 	incidents, err := repo.GetIncidentRepo(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failded to get incidents: %w", err)
+		return nil, fmt.Errorf("failed to get incidents: %w", err)
 	}
 
 	jsonMar, err := json.MarshalIndent(incidents, "", " ")

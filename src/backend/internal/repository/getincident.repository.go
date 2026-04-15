@@ -7,7 +7,7 @@ import (
 )
 
 func (r *Repo) GetIncidentRepo(ctx context.Context) ([]model.Incident,error) {
-	rows, err := r.conn.Query(ctx, 
+	rows, err := r.pool.Query(ctx, 
 	`SELECT id, title, lvl, lat, lng, color, status, created_at
 		FROM incidents
 		WHERE created_at > NOW() - INTERVAL '2 hours'`,

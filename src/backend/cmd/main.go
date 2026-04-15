@@ -14,13 +14,13 @@ import (
 func main() {
 	ctx := context.Background()
 
-	conn, err := db.CreateConnection(ctx)
+	pool, err := db.CreatePool(ctx)
 	if err != nil {
 		log.Fatalf("Cannot connect to DB: %v", err)
 	}
-	defer conn.Close(ctx)
+	defer pool.Close()
 
-	repo := repository.NewRepo(conn)
+	repo := repository.NewRepo(pool)
 
 	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIncident(repo)))
 	http.HandleFunc("/incidents", middleware.MethodOnly(http.MethodGet, handler.HandlerGetIncident(repo)))

@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"urbis/src/backend/internal/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Repo struct {
-	conn *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func NewRepo(conn *pgx.Conn) *Repo {
-	return &Repo{conn: conn}
+func NewRepo(pool *pgxpool.Pool) *Repo {
+	return &Repo{pool: pool}
 }
 
 func (r *Repo) CreateIncidentRepo(i *model.Incident, ctx context.Context) error {
-	_, err := r.conn.Exec(ctx,
+	_, err := r.pool.Exec(ctx,
 		`INSERT INTO incidents (title, lvl, lat, lng, color, status)
     VALUES ($1, $2, $3, $4, $5, $6)`,
 		i.Title, i.Lvl, i.Lat, i.Lng, i.Color, i.Status,

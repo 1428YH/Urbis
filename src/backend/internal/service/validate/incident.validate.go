@@ -11,7 +11,7 @@ func Incident(i *model.IncidentRequest) error {
 	}
 
 	if i.Lvl < 1 || i.Lvl > 3 {
-		return errors.New("ERROR_LVL_IVALID")
+		return errors.New("ERROR_LVL_INVALID")
 	}
 
 	if i.Lat < -90.0 || i.Lat > 90.0 {

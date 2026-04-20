@@ -1,6 +1,6 @@
 {
   "name": "agent",
-  "module": "index.ts",
+  "module": "src/main.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@mistralai/mistralai": "^2.2.0",
+    "@types/express": "^5.0.6",
+    "express": "^4.18.0",
     "dotenv": "^17.4.2"
   }
 }

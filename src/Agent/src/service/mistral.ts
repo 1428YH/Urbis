@@ -5,7 +5,7 @@ export interface CallAgentOptions {
     userMessage: string;
     systemPrompt: string;
     temperature: number; 
-    maxtokens?: number
+    maxTokens?: number
 }
 
 let _client: Mistral | null = null;
@@ -27,7 +27,7 @@ export async function callAgent(opts: CallAgentOptions) {
         const response = await client.chat.complete({
             model: config.mistralModel,
             temperature: opts.temperature,
-            maxTokens: opts.maxtokens ?? 8192,
+            maxTokens: opts.maxTokens ?? 8192,
             messages: [
                 {role: "system", content: opts.systemPrompt},
                 {role: "user", content: opts.userMessage}
@@ -39,6 +39,8 @@ export async function callAgent(opts: CallAgentOptions) {
 
         return content as string
     } catch(error) {
-        
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error("Mistral API error:", errorMessage);
+        return;
     }
 }

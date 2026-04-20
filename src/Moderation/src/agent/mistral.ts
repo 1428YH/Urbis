@@ -35,7 +35,7 @@ export async function callAgent(opts: CallAgentOptions) {
         })
 
         const content = response.choices[0]?.message?.content;
-        if (!content) throw new Error("Empty response");
+        if (!content) return null;
 
         return content as string
     } catch(error) {

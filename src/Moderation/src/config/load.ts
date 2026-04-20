@@ -20,7 +20,7 @@ export async function loadConfig(): Promise<AppConfig> {
     return {
         mistralKey: key,
         mistralModel: process.env.MISTRAL_MODEL ?? "mistral-small-latest",
-        agentPort: Number(process.env.AGENT_PORT) ?? 3000
+        agentPort: Number(process.env.AGENT_PORT) || 3000
     }
 }
 

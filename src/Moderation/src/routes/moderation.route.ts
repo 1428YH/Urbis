@@ -3,6 +3,6 @@ import { moderation } from "../controllers/moderation.controller.js";
 
 const router = Router()
 
-router.post("/", moderation)
+router.post("/moderation", moderation)
 
 export default router

@@ -6,16 +6,21 @@ import { SystemPromptModerate } from '../utilities/prompts/moderation.prompt.js'
 
 
 export const moderation = async (req: Request, res: Response, next: NextFunction ) => {
-    const { message } = req.body as unknown as { message: string }
-    if (!message) {
-        res.status(400).json({ error: 'message is required' })
+    const body = req.body as { title: string; description?: string; lvl: number }
+    if (!body) {
+        res.status(400).json({ error: 'title is required' })
         return
     }
 
     try {
+    const userMessage = [
+        `Заголовок: ${body.title}`,
+        `Описание: ${body.description ?? "не указано"}`,
+        `Уровень (от пользователя): ${body.lvl}`,
+    ].join("\n")
 
     const result = await callAgent({
-        userMessage: message, 
+        userMessage, 
         systemPrompt: SystemPromptModerate, 
         temperature: 0.2
     })

@@ -8,6 +8,7 @@
 go.work
 page 
 .env
+.env.agent
 test
 node_modules
 out

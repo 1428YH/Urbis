@@ -1,7 +1,9 @@
+import addIcon from '../src/assets/icons/Add.png'
+
 function CreateIncidentButton({ onClick }) {
   return (
     <button className="create-btn" onClick={onClick}>
-      + Добавить инцидент
+      <img src={addIcon} alt="Добавить инцидент" />
     </button>
   )
 }

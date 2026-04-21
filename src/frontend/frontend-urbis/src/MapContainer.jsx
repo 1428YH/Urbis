@@ -1,8 +1,6 @@
 function MapContainer() {
   return (
-    <div className="map-container">
-      {/* Сюда подключишь реальную карту (Leaflet, Mapbox, etc.) */}
-    </div>
+    <div className="map-container"></div>
   )
 }
 

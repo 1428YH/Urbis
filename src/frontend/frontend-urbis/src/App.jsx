@@ -10,21 +10,14 @@ function App() {
 
   return (
     <div className="app">
-
-      {/* Основной layout: карта + сайдбар */}
       <div className="layout">
         <MapContainer />
         <Sidebar />
       </div>
-
-      {/* Кнопка — фиксированная, поверх всего */}
       <CreateIncidentButton onClick={() => setIsModalOpen(true)} />
-
-      {/* Модалка — рендерится только когда открыта */}
       {isModalOpen && (
         <IncidentFormModal onClose={() => setIsModalOpen(false)} />
       )}
-
     </div>
   )
 }

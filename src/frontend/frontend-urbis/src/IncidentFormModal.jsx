@@ -6,12 +6,10 @@ function IncidentFormModal({ onClose }) {
 
   function handleSubmit(e) {
     e.preventDefault()
-    // TODO: отправить данные на бэкенд
     console.log({ title, description })
     onClose()
   }
 
-  // Клик по тёмному фону — закрыть модалку
   function handleBackdropClick(e) {
     if (e.target === e.currentTarget) onClose()
   }

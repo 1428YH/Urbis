@@ -10,6 +10,10 @@ func Incident(i *model.IncidentRequest) error {
 		return errors.New("ERROR_TITLE_EMPTY")
 	}
 
+	if i.Description == "" {
+		return errors.New("ERROR_DESCRIPTION_EMPTY")
+	}
+
 	if i.Lvl < 1 || i.Lvl > 3 {
 		return errors.New("ERROR_LVL_INVALID")
 	}

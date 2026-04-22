@@ -42,7 +42,7 @@ export const moderation = async (req: Request, res: Response, next: NextFunction
         return;
     }
 
-    res.json({reply: parse})
+    res.json(parse)
 
     } catch(error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

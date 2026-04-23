@@ -40,7 +40,6 @@ func CreateIncident(req *model.IncidentRequest, repo *repository.Repo, ctx conte
 		Status: resp.Action,
 		Reason: resp.Reason,
 	}
-	fmt.Printf("%v", incident)
 
 	return repo.CreateIncidentRepo(&incident, ctx)
 }

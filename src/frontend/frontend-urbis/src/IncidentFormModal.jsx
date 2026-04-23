@@ -1,62 +1,126 @@
 import { useState } from 'react'
+import newIcon from './assets/icons/New.png'
 
-function IncidentFormModal({ onClose }) {
-  const [title, setTitle]       = useState('')
+const SEVERITY_OPTIONS = [
+  { value: 'critical', label: 'Критический' },
+  { value: 'high', label: 'Высокий' },
+  { value: 'low', label: 'Низкий' },
+]
+
+function IncidentFormModal({
+  address = '',
+  addressLoading = false,
+  isSubmitting = false,
+  onClose,
+  onSubmit,
+}) {
+  const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [severity, setSeverity] = useState('high')
+  const [submitError, setSubmitError] = useState('')
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    console.log({ title, description })
-    onClose()
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setSubmitError('')
+
+    try {
+      await onSubmit?.({ title, description, address, severity })
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Не удалось создать событие.')
+    }
   }
 
-  function handleBackdropClick(e) {
-    if (e.target === e.currentTarget) onClose()
+  function handleBackdropClick(event) {
+    if (event.target === event.currentTarget && !isSubmitting) {
+      onClose()
+    }
   }
 
   return (
     <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="modal">
+      <div className="modal modal--incident">
+        <button
+          type="button"
+          className="modal__close"
+          onClick={onClose}
+          aria-label="Закрыть"
+          disabled={isSubmitting}
+        >
+          ×
+        </button>
 
-        <div className="modal__header">
-          <h2 className="modal__title">Новый инцидент</h2>
-          <button className="modal__close" onClick={onClose}>✕</button>
-        </div>
-
-        <form className="modal__form" onSubmit={handleSubmit}>
-
-          <label className="modal__label">
-            Название
+        <form className="modal__form modal__form--incident" onSubmit={handleSubmit}>
+          <label className="modal__field">
+            <span className="modal__field-label">Название</span>
             <input
-              className="modal__input"
+              className="modal__line-input"
               type="text"
-              placeholder="Введите название..."
               value={title}
-              onChange={e => setTitle(e.target.value)}
+              onChange={(event) => setTitle(event.target.value)}
               required
             />
           </label>
 
-          <label className="modal__label">
-            Описание
+          <label className="modal__field">
+            <span className="modal__field-label">Описание</span>
             <textarea
-              className="modal__textarea"
-              placeholder="Опишите инцидент..."
+              className="modal__line-input modal__line-input--description"
               value={description}
-              onChange={e => setDescription(e.target.value)}
+              onChange={(event) => setDescription(event.target.value)}
               rows={4}
+              required
             />
           </label>
 
-          <div className="modal__actions">
-            <button type="button" className="modal__btn modal__btn--cancel" onClick={onClose}>
-              Отмена
-            </button>
-            <button type="submit" className="modal__btn modal__btn--submit">
-              Создать
+          <div className="modal__field">
+            <span className="modal__field-label modal__field-label--small">Уровень</span>
+            <div
+              className={`severity-switch severity-switch--${severity}`}
+              role="radiogroup"
+              aria-label="Уровень преступления"
+            >
+              <span className="severity-switch__highlight" aria-hidden="true" />
+
+              {SEVERITY_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={severity === option.value}
+                  className={`severity-switch__option ${
+                    severity === option.value ? 'severity-switch__option--active' : ''
+                  }`}
+                  onClick={() => setSeverity(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="modal__footer">
+            <label className="modal__field modal__field--address">
+              <span className="modal__field-label modal__field-label--small">Адрес</span>
+              <input
+                className="modal__line-input modal__line-input--address"
+                type="text"
+                readOnly
+                value={address}
+                placeholder={addressLoading ? 'Определяем адрес...' : 'Адрес будет определён по геолокации'}
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="modal__submit-fab"
+              aria-label="Создать событие"
+              disabled={isSubmitting}
+            >
+              <img src={newIcon} alt="" className="modal__submit-fab-icon" />
             </button>
           </div>
 
+          {submitError && <p className="modal__error">{submitError}</p>}
         </form>
       </div>
     </div>

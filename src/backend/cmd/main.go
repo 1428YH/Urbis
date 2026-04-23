@@ -24,6 +24,7 @@ func main() {
 
 	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIncident(repo)))
 	http.HandleFunc("/incidents", middleware.MethodOnly(http.MethodGet, handler.HandlerGetIncident(repo)))
+	http.HandleFunc("PATCH /confirm/{id}", middleware.MethodOnly(http.MethodPatch, handler.ReviewHandler(repo)))
 
 	fmt.Println("Starting HTTP server!")
 	err = http.ListenAndServe(":9091", nil)

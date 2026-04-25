@@ -8,11 +8,39 @@ import './App.css'
 
 const DEFAULT_CENTER = [30.31413, 59.93863]
 const POLLING_INTERVAL_MS = 20000
+const EMERGENCY_PHONE = '112'
 
 const SEVERITY_TO_LEVEL = {
   critical: 3,
   high: 2,
   low: 1,
+}
+
+function getIncidentSeverityMeta(incident) {
+  if (incident?.color === 'red' || incident?.lvl === 3) {
+    return { label: 'Критический', tone: 'critical' }
+  }
+
+  if (incident?.color === 'yellow' || incident?.color === 'orange' || incident?.lvl === 2) {
+    return { label: 'Высокий', tone: 'high' }
+  }
+
+  return { label: 'Низкий', tone: 'low' }
+}
+
+function formatIncidentDate(value) {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date)
 }
 
 function App() {
@@ -29,6 +57,9 @@ function App() {
   const [addressLoading, setAddressLoading] = useState(false)
   const [toast, setToast] = useState(null)
   const pollingRef = useRef(null)
+
+  const selectedIncident = incidents.find((incident) => incident.id === selectedIncidentId) || null
+  const selectedIncidentSeverity = selectedIncident ? getIncidentSeverityMeta(selectedIncident) : null
 
   useEffect(() => {
     loadIncidents({ showInitialLoader: true, showToastOnError: true })
@@ -61,7 +92,7 @@ function App() {
 
     const timeoutId = window.setTimeout(() => {
       setToast(null)
-    }, 4200)
+    }, 5200)
 
     return () => window.clearTimeout(timeoutId)
   }, [toast])
@@ -95,8 +126,8 @@ function App() {
     }
   }, [activeCoordinates])
 
-  function showToast(type, message) {
-    setToast({ type, message })
+  function showToast(type, message, options = {}) {
+    setToast({ type, message, ...options })
   }
 
   async function loadIncidents(options = {}) {
@@ -151,7 +182,14 @@ function App() {
       await loadIncidents({ silent: true, showToastOnError: true })
       setSelectedIncidentId(null)
       setIsModalOpen(false)
-      showToast('success', 'Событие отправлено и обработано backend.')
+      showToast(
+        'success',
+        'Событие отправлено. При угрозе жизни рекомендуется вызвать службу спасения.',
+        {
+          actionLabel: 'Позвонить 112',
+          actionHref: `tel:${EMERGENCY_PHONE}`,
+        },
+      )
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Не удалось создать событие.'
       showToast('error', message)
@@ -170,7 +208,14 @@ function App() {
     <div className="app">
       {toast && (
         <div className={`toast toast--${toast.type}`}>
-          <p className="toast__text">{toast.message}</p>
+          <div className="toast__content">
+            <p className="toast__text">{toast.message}</p>
+            {toast.actionHref && toast.actionLabel && (
+              <a href={toast.actionHref} className="toast__action">
+                {toast.actionLabel}
+              </a>
+            )}
+          </div>
           <button type="button" className="toast__close" onClick={() => setToast(null)}>
             ×
           </button>
@@ -181,10 +226,14 @@ function App() {
         <MapContainer
           incidents={incidents}
           incidentsRefreshing={incidentsRefreshing}
+          selectedIncident={selectedIncident}
           selectedIncidentId={selectedIncidentId}
+          selectedIncidentSeverity={selectedIncidentSeverity}
           isGeoHidden={sidebarMode === 'full'}
+          onIncidentClose={() => setSelectedIncidentId(null)}
           onIncidentSelect={handleSelectIncident}
           onLocationChange={setActiveCoordinates}
+          formatIncidentDate={formatIncidentDate}
         />
         <Sidebar
           incidents={incidents}

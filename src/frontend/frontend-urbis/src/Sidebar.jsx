@@ -17,6 +17,18 @@ function formatTimeLabel(value) {
   }).format(date)
 }
 
+function getIncidentSeverityMeta(incident) {
+  if (incident?.color === 'red' || incident?.lvl === 3) {
+    return { label: 'Критический', tone: 'critical' }
+  }
+
+  if (incident?.color === 'yellow' || incident?.color === 'orange' || incident?.lvl === 2) {
+    return { label: 'Высокий', tone: 'high' }
+  }
+
+  return { label: 'Низкий', tone: 'low' }
+}
+
 function Sidebar({
   incidents,
   loading,
@@ -26,7 +38,9 @@ function Sidebar({
   onIncidentSelect,
   onModeChange,
 }) {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(
+    () => typeof window !== 'undefined' ? '' : '',
+  )
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT,
   )
@@ -173,18 +187,26 @@ function Sidebar({
 
         {!loading &&
           !error &&
-          filtered.map((incident) => (
-            <button
-              key={incident.id}
-              type="button"
-              className={`incident-card ${selectedIncidentId === incident.id ? 'incident-card--active' : ''}`}
-              onClick={() => onIncidentSelect?.(incident)}
-            >
-              <div className="incident-card__title">{incident.title || 'Без названия'}</div>
-              <div className="incident-card__address">{incident.description || 'Без описания'}</div>
-              <div className="incident-card__time">{formatTimeLabel(incident.created_at)}</div>
-            </button>
-          ))}
+          filtered.map((incident) => {
+            const severity = getIncidentSeverityMeta(incident)
+
+            return (
+              <button
+                key={incident.id}
+                type="button"
+                className={`incident-card ${selectedIncidentId === incident.id ? 'incident-card--active' : ''}`}
+                onClick={() => onIncidentSelect?.(incident)}
+              >
+                <div className="incident-card__title">{incident.title || 'Без названия'}</div>
+                <div className="incident-card__meta">
+                  <span className="incident-card__meta-label">Уровень</span>
+                  <span className={`severity-pill severity-pill--${severity.tone}`}>{severity.label}</span>
+                </div>
+                <div className="incident-card__address">{incident.description || 'Без описания'}</div>
+                <div className="incident-card__time">{formatTimeLabel(incident.created_at)}</div>
+              </button>
+            )
+          })}
       </div>
     </aside>
   )

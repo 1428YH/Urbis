@@ -109,6 +109,14 @@ function createIncidentPopupElement(selectedIncident, selectedIncidentSeverity, 
     meta.append(time)
   }
 
+  if (selectedIncident.image_url) {
+    const image = document.createElement('img')
+    image.className = 'map-container__incident-popup-image'
+    image.src = selectedIncident.image_url
+    image.alt = selectedIncident.title || 'Изображение события'
+    popupElement.append(image)
+  }
+
   const description = document.createElement('p')
   description.className = 'map-container__incident-popup-description'
   description.textContent =

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import newIcon from './assets/icons/New.png'
 
 const SEVERITY_OPTIONS = [
@@ -17,14 +17,29 @@ function IncidentFormModal({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [severity, setSeverity] = useState('high')
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
   const [submitError, setSubmitError] = useState('')
+  const fileInputRef = useRef(null)
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreview('')
+      return undefined
+    }
+
+    const objectUrl = URL.createObjectURL(imageFile)
+    setImagePreview(objectUrl)
+
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [imageFile])
 
   async function handleSubmit(event) {
     event.preventDefault()
     setSubmitError('')
 
     try {
-      await onSubmit?.({ title, description, address, severity })
+      await onSubmit?.({ title, description, address, severity, imageFile })
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Не удалось создать событие.')
     }
@@ -33,6 +48,24 @@ function IncidentFormModal({
   function handleBackdropClick(event) {
     if (event.target === event.currentTarget && !isSubmitting) {
       onClose()
+    }
+  }
+
+  function handleChooseImage() {
+    if (!isSubmitting) {
+      fileInputRef.current?.click()
+    }
+  }
+
+  function handleImageChange(event) {
+    const nextFile = event.target.files?.[0] || null
+    setImageFile(nextFile)
+  }
+
+  function handleClearImage() {
+    setImageFile(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -95,6 +128,58 @@ function IncidentFormModal({
                   {option.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="modal__field">
+            <span className="modal__field-label modal__field-label--small">Изображение</span>
+            <input
+              ref={fileInputRef}
+              className="modal__file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+
+            <div className="modal__image-row">
+              <button
+                type="button"
+                className={`modal__image-picker ${imagePreview ? 'modal__image-picker--filled' : ''}`}
+                onClick={handleChooseImage}
+                disabled={isSubmitting}
+              >
+                {imagePreview ? (
+                  <img src={imagePreview} alt="" className="modal__image-preview" />
+                ) : (
+                  <div className="modal__image-placeholder">
+                    <span className="modal__image-placeholder-mark">+</span>
+                    <span className="modal__image-placeholder-title">Добавить фото</span>
+                    <span className="modal__image-placeholder-text">
+                      JPG, PNG или HEIC
+                    </span>
+                  </div>
+                )}
+              </button>
+
+              <div className="modal__image-meta">
+                <span className="modal__image-name">
+                  {imageFile ? imageFile.name : 'Файл ещё не выбран'}
+                </span>
+                <span className="modal__image-hint">
+                  {imageFile ? 'Изображение прикрепится к событию' : 'Нажмите, чтобы выбрать снимок'}
+                </span>
+
+                {imageFile && (
+                  <button
+                    type="button"
+                    className="modal__image-clear"
+                    onClick={handleClearImage}
+                    disabled={isSubmitting}
+                  >
+                    Убрать
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 

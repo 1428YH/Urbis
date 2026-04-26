@@ -30,6 +30,23 @@ export async function createIncident(payload) {
   }
 }
 
+export async function uploadIncidentImage(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await fetch(`${API_PREFIX}/upload`, {
+    method: 'POST',
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error(await parseError(response))
+  }
+
+  const data = await response.json()
+  return data?.image_url || ''
+}
+
 export async function reverseGeocode(coordinates) {
   const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY
 

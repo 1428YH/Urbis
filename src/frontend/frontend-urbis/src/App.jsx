@@ -3,7 +3,7 @@ import CreateIncidentButton from './CreateIncidentButton'
 import IncidentFormModal from './IncidentFormModal'
 import MapContainer from './MapContainer'
 import Sidebar from './Sidebar'
-import { createIncident, fetchIncidents, reverseGeocode } from './lib/api'
+import { createIncident, fetchIncidents, reverseGeocode, uploadIncidentImage } from './lib/api'
 import './App.css'
 
 const DEFAULT_CENTER = [30.31413, 59.93863]
@@ -167,17 +167,24 @@ function App() {
   }
 
   async function handleCreateIncident(formValues) {
-    const payload = {
-      title: formValues.title,
-      description: formValues.description,
-      lvl: SEVERITY_TO_LEVEL[formValues.severity],
-      lat: activeCoordinates[1],
-      lng: activeCoordinates[0],
-    }
-
     setCreatingIncident(true)
 
     try {
+      let imageUrl = ''
+
+      if (formValues.imageFile) {
+        imageUrl = await uploadIncidentImage(formValues.imageFile)
+      }
+
+      const payload = {
+        title: formValues.title,
+        description: formValues.description,
+        lvl: SEVERITY_TO_LEVEL[formValues.severity],
+        lat: activeCoordinates[1],
+        lng: activeCoordinates[0],
+        image_url: imageUrl,
+      }
+
       await createIncident(payload)
       await loadIncidents({ silent: true, showToastOnError: true })
       setSelectedIncidentId(null)

@@ -25,20 +25,21 @@ func CreateIncident(req *model.IncidentRequest, repo *repository.Repo, ctx conte
 	}
 
 	color := map[int]string{
-		1:"green", 
-		2:"yellow", 
-		3:"red",
+		1: "green",
+		2: "yellow",
+		3: "red",
 	}
 
-	incident := model.Incident {
-		Title: resp.Text,
+	incident := model.Incident{
+		Title:       resp.Text,
 		Description: req.Description,
-		Lvl: resp.Lvl,
-		Lat: req.Lat,
-		Lng: req.Lng,
-		Color: color[resp.Lvl],
-		Status: resp.Action,
-		Reason: resp.Reason,
+		Lvl:         resp.Lvl,
+		Lat:         req.Lat,
+		Lng:         req.Lng,
+		ImageURL:    req.ImageURL,
+		Color:       color[resp.Lvl],
+		Status:      resp.Action,
+		Reason:      resp.Reason,
 	}
 
 	return repo.CreateIncidentRepo(&incident, ctx)

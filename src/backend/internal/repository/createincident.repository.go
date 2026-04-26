@@ -17,10 +17,19 @@ func NewRepo(pool *pgxpool.Pool) *Repo {
 }
 
 func (r *Repo) CreateIncidentRepo(i *model.Incident, ctx context.Context) error {
-	_, err := r.pool.Exec(ctx,
-    `INSERT INTO incidents (title, description, lvl, lat, lng, color, status, reason)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-    i.Title, i.Description, i.Lvl, i.Lat, i.Lng, i.Color, i.Status, i.Reason,
+	_, err := r.pool.Exec(
+		ctx,
+		`INSERT INTO incidents (title, description, lvl, lat, lng, image_url, color, status, reason)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		i.Title,
+		i.Description,
+		i.Lvl,
+		i.Lat,
+		i.Lng,
+		i.ImageURL,
+		i.Color,
+		i.Status,
+		i.Reason,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert incident into DB: %w", err)

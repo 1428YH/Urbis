@@ -25,6 +25,8 @@ func main() {
 	http.HandleFunc("/create", middleware.MethodOnly(http.MethodPost, handler.HandlerCreateIncident(repo)))
 	http.HandleFunc("/incidents", middleware.MethodOnly(http.MethodGet, handler.HandlerGetIncident(repo)))
 	http.HandleFunc("PATCH /confirm/{id}", middleware.MethodOnly(http.MethodPatch, handler.ReviewHandler(repo)))
+	http.HandleFunc("/upload", middleware.MethodOnly(http.MethodPost, handler.UploadImageHandler()))
+	http.Handle("/uploaded_img/", http.StripPrefix("/uploaded_img/", http.FileServer(http.Dir("./uploaded_img"))))
 
 	fmt.Println("Starting HTTP server!")
 	err = http.ListenAndServe(":9091", nil)

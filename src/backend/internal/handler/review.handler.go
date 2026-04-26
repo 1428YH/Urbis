@@ -20,6 +20,7 @@ func ReviewHandler(repo *repository.Repo) http.HandlerFunc {
 		err = service.ReviewConfirm(idInt, repo, r.Context())
 		if err != nil {
 			http.Error(w, fmt.Sprintf("❌ failed to confim incident: %v", err), http.StatusBadRequest)
+			return 
 		}
 
 		w.Header().Set("Content-Type", "application/json")

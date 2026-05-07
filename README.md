@@ -64,7 +64,7 @@ VITE_YANDEX_MAPS_API_KEY=your_yandex_maps_api_key
 ### instalation
 ```
 # Clone repository
-git clone https://github.com/yourusername/urbis.git
+git clone https://github.com/1428Stef/urbis.git
 cd urbis
 
 # Install all dependencies
